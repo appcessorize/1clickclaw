@@ -1,0 +1,63 @@
+<% content_for :title, "Edit #{@user.display_name} - Admin - ClawSaaS" %>
+
+<div class="mb-8">
+  <div class="flex items-center gap-4 mb-4">
+    <%= link_to admin_user_path(@user), class: "btn btn-ghost btn-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back
+    <% end %>
+  </div>
+
+  <h1 class="text-3xl font-bold">Edit User</h1>
+  <p class="text-base-content/70"><%= @user.email %></p>
+</div>
+
+<div class="card bg-base-100 shadow max-w-2xl">
+  <div class="card-body">
+    <%= form_with model: [:admin, @user], local: true, class: "space-y-4" do |f| %>
+      <% if @user.errors.any? %>
+        <div class="alert alert-error">
+          <ul class="list-disc list-inside">
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-control">
+        <%= f.label :name, class: "label" do %>
+          <span class="label-text">Name</span>
+        <% end %>
+        <%= f.text_field :name, class: "input input-bordered w-full" %>
+      </div>
+
+      <div class="form-control">
+        <%= f.label :email, class: "label" do %>
+          <span class="label-text">Email</span>
+        <% end %>
+        <%= f.email_field :email, class: "input input-bordered w-full" %>
+      </div>
+
+      <div class="form-control">
+        <%= f.label :role, class: "label" do %>
+          <span class="label-text">Role</span>
+        <% end %>
+        <%= f.select :role, User.roles.keys.map { |r| [r.titleize, r] }, {}, class: "select select-bordered w-full" %>
+      </div>
+
+      <div class="form-control">
+        <%= f.label :subscription_status, class: "label" do %>
+          <span class="label-text">Subscription Status</span>
+        <% end %>
+        <%= f.select :subscription_status, User.subscription_statuses.keys.map { |s| [s.titleize, s] }, {}, class: "select select-bordered w-full" %>
+      </div>
+
+      <div class="form-control mt-6">
+        <%= f.submit "Update User", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

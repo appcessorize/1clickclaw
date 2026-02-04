@@ -1,0 +1,120 @@
+<% content_for :title, "Users - Admin - ClawSaaS" %>
+
+<div class="mb-8">
+  <h1 class="text-3xl font-bold">Users</h1>
+  <p class="text-base-content/70">Manage all users in your application</p>
+</div>
+
+<!-- Filters -->
+<div class="card bg-base-100 shadow mb-6">
+  <div class="card-body">
+    <%= form_tag admin_users_path, method: :get, class: "flex flex-wrap gap-4 items-end" do %>
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Search</span>
+        </label>
+        <%= text_field_tag :search, params[:search], placeholder: "Email...", class: "input input-bordered input-sm w-full max-w-xs" %>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Role</span>
+        </label>
+        <%= select_tag :role, options_for_select([["All Roles", ""], ["Member", "member"], ["Admin", "admin"]], params[:role]), class: "select select-bordered select-sm" %>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Status</span>
+        </label>
+        <%= select_tag :status, options_for_select([["All Statuses", ""], ["None", "none"], ["Trialing", "trialing"], ["Active", "active"], ["Past Due", "past_due"], ["Canceled", "canceled"]], params[:status]), class: "select select-bordered select-sm" %>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+      <%= link_to "Clear", admin_users_path, class: "btn btn-ghost btn-sm" %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Users Table -->
+<div class="card bg-base-100 shadow">
+  <div class="card-body">
+    <div class="overflow-x-auto">
+      <table class="table table-zebra">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Stripe Customer</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar placeholder">
+                    <div class="bg-neutral text-neutral-content w-10 rounded-full">
+                      <span><%= user.display_name.first.upcase %></span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold"><%= user.display_name %></div>
+                    <div class="text-sm opacity-50"><%= user.email %></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge <%= user.admin? ? 'badge-primary' : 'badge-ghost' %>">
+                  <%= user.role.titleize %>
+                </span>
+              </td>
+              <td>
+                <% badge_class = case user.subscription_status.to_sym
+                   when :active then "badge-success"
+                   when :trialing then "badge-info"
+                   when :past_due then "badge-warning"
+                   when :canceled then "badge-error"
+                   else "badge-ghost"
+                   end %>
+                <span class="badge <%= badge_class %>"><%= user.subscription_status.titleize %></span>
+              </td>
+              <td>
+                <% if user.stripe_customer_id.present? %>
+                  <code class="text-xs"><%= user.stripe_customer_id.truncate(15) %></code>
+                <% else %>
+                  <span class="text-base-content/50">-</span>
+                <% end %>
+              </td>
+              <td><%= user.created_at.strftime("%b %d, %Y") %></td>
+              <td>
+                <div class="flex gap-2">
+                  <%= link_to admin_user_path(user), class: "btn btn-ghost btn-xs" do %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  <% end %>
+                  <%= link_to edit_admin_user_path(user), class: "btn btn-ghost btn-xs" do %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @users.empty? %>
+      <div class="text-center py-8">
+        <p class="text-base-content/50">No users found</p>
+      </div>
+    <% end %>
+  </div>
+</div>

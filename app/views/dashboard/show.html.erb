@@ -1,0 +1,174 @@
+<% content_for :title, "Dashboard - ClawSaaS" %>
+
+<div class="container mx-auto px-4 py-8">
+  <!-- Paywall overlay for past_due users -->
+  <% if current_user.subscription_past_due? %>
+    <div class="alert alert-warning mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">Payment Required</h3>
+        <p>Your payment has failed. Please update your payment method to continue using all features.</p>
+      </div>
+      <%= button_to "Update Payment", portal_subscriptions_path, method: :post, class: "btn btn-sm" %>
+    </div>
+  <% end %>
+
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold">Welcome back, <%= current_user.display_name %>!</h1>
+      <p class="text-base-content/70">Here's what's happening with your account today.</p>
+    </div>
+    <% if current_user.subscribed? && current_user.stripe_customer_id.present? %>
+      <%= button_to "Manage Billing", portal_subscriptions_path, method: :post, class: "btn btn-outline" %>
+    <% elsif !current_user.subscribed? %>
+      <%= link_to "Upgrade Plan", pricing_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats stats-vertical md:stats-horizontal shadow w-full mb-8">
+    <div class="stat">
+      <div class="stat-figure text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <div class="stat-title">Subscription Status</div>
+      <div class="stat-value text-lg">
+        <% case current_user.subscription_status.to_sym %>
+        <% when :trialing %>
+          <span class="badge badge-info badge-lg">Trial</span>
+        <% when :active %>
+          <span class="badge badge-success badge-lg">Active</span>
+        <% when :past_due %>
+          <span class="badge badge-warning badge-lg">Past Due</span>
+        <% when :canceled %>
+          <span class="badge badge-error badge-lg">Canceled</span>
+        <% else %>
+          <span class="badge badge-ghost badge-lg">None</span>
+        <% end %>
+      </div>
+      <% if current_user.trial_active? %>
+        <div class="stat-desc"><%= current_user.days_remaining_in_trial %> days left in trial</div>
+      <% end %>
+    </div>
+
+    <div class="stat">
+      <div class="stat-figure text-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="stat-title">Member Since</div>
+      <div class="stat-value text-lg"><%= current_user.created_at.strftime("%b %Y") %></div>
+      <div class="stat-desc"><%= distance_of_time_in_words_to_now(current_user.created_at) %> ago</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-figure text-accent">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="stat-title">Sign-ins</div>
+      <div class="stat-value text-lg"><%= current_user.sign_in_count %></div>
+      <div class="stat-desc">Last: <%= current_user.current_sign_in_at&.strftime("%b %d, %H:%M") || "N/A" %></div>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- Quick Actions -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">Quick Actions</h2>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <%= link_to edit_user_registration_path, class: "btn btn-outline" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Edit Profile
+          <% end %>
+          <% if current_user.stripe_customer_id.present? %>
+            <%= button_to portal_subscriptions_path, method: :post, class: "btn btn-outline" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Billing
+            <% end %>
+          <% else %>
+            <%= link_to pricing_path, class: "btn btn-primary" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              Upgrade
+            <% end %>
+          <% end %>
+          <%= link_to "#", class: "btn btn-outline" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Settings
+          <% end %>
+          <%= link_to "#", class: "btn btn-outline" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Help
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">Account Information</h2>
+        <div class="space-y-4 mt-4">
+          <div class="flex justify-between items-center py-2 border-b border-base-200">
+            <span class="text-base-content/70">Email</span>
+            <span class="font-medium"><%= current_user.email %></span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-base-200">
+            <span class="text-base-content/70">Name</span>
+            <span class="font-medium"><%= current_user.name || "Not set" %></span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-base-200">
+            <span class="text-base-content/70">Role</span>
+            <span class="badge badge-outline"><%= current_user.role.titleize %></span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-base-content/70">Auth Method</span>
+            <span class="font-medium"><%= current_user.provider.present? ? current_user.provider.titleize : "Email" %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usage Metrics Placeholder -->
+  <div class="card bg-base-100 shadow mt-6">
+    <div class="card-body">
+      <h2 class="card-title">Usage Metrics</h2>
+      <p class="text-base-content/70">Track your usage and activity here.</p>
+
+      <div class="grid md:grid-cols-3 gap-6 mt-6">
+        <div class="text-center p-6 bg-base-200 rounded-lg">
+          <div class="text-4xl font-bold text-primary">0</div>
+          <div class="text-base-content/70 mt-2">API Calls</div>
+        </div>
+        <div class="text-center p-6 bg-base-200 rounded-lg">
+          <div class="text-4xl font-bold text-secondary">0</div>
+          <div class="text-base-content/70 mt-2">Projects</div>
+        </div>
+        <div class="text-center p-6 bg-base-200 rounded-lg">
+          <div class="text-4xl font-bold text-accent">0 GB</div>
+          <div class="text-base-content/70 mt-2">Storage Used</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

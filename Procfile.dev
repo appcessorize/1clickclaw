@@ -1,0 +1,5 @@
+web: env RUBY_DEBUG_OPEN=true bin/rails server -p 3001
+js: yarn build --watch=forever
+css: bun run build:css --watch
+# Uncomment to enable Stripe webhook forwarding in development
+# stripe: stripe listen --forward-to localhost:3001/webhooks/stripe

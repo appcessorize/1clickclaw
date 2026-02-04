@@ -1,0 +1,118 @@
+<% content_for :title, "Admin Dashboard - ClawSaaS" %>
+
+<div class="mb-8">
+  <h1 class="text-3xl font-bold">Dashboard</h1>
+  <p class="text-base-content/70">Overview of your SaaS metrics</p>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+  <div class="stat bg-base-100 rounded-lg shadow">
+    <div class="stat-title">Total Users</div>
+    <div class="stat-value text-primary"><%= @stats[:total_users] %></div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-lg shadow">
+    <div class="stat-title">Active Subs</div>
+    <div class="stat-value text-success"><%= @stats[:active_subscriptions] %></div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-lg shadow">
+    <div class="stat-title">Trialing</div>
+    <div class="stat-value text-info"><%= @stats[:trialing_users] %></div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-lg shadow">
+    <div class="stat-title">Past Due</div>
+    <div class="stat-value text-warning"><%= @stats[:past_due_users] %></div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-lg shadow">
+    <div class="stat-title">Canceled</div>
+    <div class="stat-value text-error"><%= @stats[:canceled_users] %></div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-lg shadow">
+    <div class="stat-title">New This Month</div>
+    <div class="stat-value"><%= @stats[:new_users_this_month] %></div>
+  </div>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-6">
+  <!-- Recent Users -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="card-title">Recent Users</h2>
+        <%= link_to "View All", admin_users_path, class: "btn btn-sm btn-ghost" %>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Status</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_users.each do |user| %>
+              <tr>
+                <td>
+                  <div class="flex items-center gap-3">
+                    <div class="avatar placeholder">
+                      <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                        <span class="text-xs"><%= user.display_name.first.upcase %></span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="font-bold"><%= user.display_name %></div>
+                      <div class="text-sm opacity-50"><%= user.email %></div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <% badge_class = case user.subscription_status.to_sym
+                     when :active then "badge-success"
+                     when :trialing then "badge-info"
+                     when :past_due then "badge-warning"
+                     when :canceled then "badge-error"
+                     else "badge-ghost"
+                     end %>
+                  <span class="badge badge-sm <%= badge_class %>"><%= user.subscription_status.titleize %></span>
+                </td>
+                <td class="text-sm"><%= user.created_at.strftime("%b %d") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Subscription Events -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Recent Subscription Events</h2>
+
+      <% if @recent_events.any? %>
+        <div class="space-y-4">
+          <% @recent_events.each do |event| %>
+            <div class="flex items-start gap-3 p-3 bg-base-200 rounded-lg">
+              <div class="w-2 h-2 mt-2 rounded-full bg-primary"></div>
+              <div class="flex-1">
+                <p class="font-medium"><%= event.event_type.gsub(".", " ").titleize %></p>
+                <p class="text-sm text-base-content/70">
+                  <%= event.user.email %> - <%= time_ago_in_words(event.created_at) %> ago
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-base-content/50 text-center py-8">No subscription events yet</p>
+      <% end %>
+    </div>
+  </div>
+</div>

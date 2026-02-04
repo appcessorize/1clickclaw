@@ -1,0 +1,191 @@
+<% content_for :title, "Pricing - ClawSaaS" %>
+
+<section class="py-20 bg-base-100">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-bold mb-4">Simple, transparent pricing</h1>
+      <p class="text-base-content/70 max-w-2xl mx-auto">
+        Choose the plan that works best for you. All plans include a 7-day free trial.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <!-- Free Plan -->
+      <div class="card bg-base-200 border border-base-300">
+        <div class="card-body">
+          <h2 class="card-title text-xl">Free</h2>
+          <p class="text-base-content/70">Perfect for getting started</p>
+          <div class="my-6">
+            <span class="text-4xl font-bold">$0</span>
+            <span class="text-base-content/70">/month</span>
+          </div>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Basic features</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Community support</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span class="text-base-content/50">Advanced features</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span class="text-base-content/50">Priority support</span>
+            </li>
+          </ul>
+          <%= link_to "Get Started", new_user_registration_path, class: "btn btn-outline w-full" %>
+        </div>
+      </div>
+
+      <!-- Pro Plan (Featured) -->
+      <div class="card bg-primary text-primary-content border-2 border-primary shadow-xl">
+        <div class="card-body">
+          <div class="badge badge-secondary mb-2">Most Popular</div>
+          <h2 class="card-title text-xl">Pro</h2>
+          <p class="text-primary-content/70">For growing businesses</p>
+          <div class="my-6">
+            <span class="text-4xl font-bold">$29</span>
+            <span class="text-primary-content/70">/month</span>
+          </div>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Everything in Free</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Advanced features</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Priority support</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Analytics dashboard</span>
+            </li>
+          </ul>
+          <% if user_signed_in? %>
+            <%= button_to "Subscribe Now", subscriptions_path, class: "btn btn-secondary w-full" %>
+          <% else %>
+            <%= link_to "Start Free Trial", new_user_registration_path, class: "btn btn-secondary w-full" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Enterprise Plan -->
+      <div class="card bg-base-200 border border-base-300">
+        <div class="card-body">
+          <h2 class="card-title text-xl">Enterprise</h2>
+          <p class="text-base-content/70">For large organizations</p>
+          <div class="my-6">
+            <span class="text-4xl font-bold">$99</span>
+            <span class="text-base-content/70">/month</span>
+          </div>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Everything in Pro</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Dedicated support</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Custom integrations</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>SLA guarantee</span>
+            </li>
+          </ul>
+          <%= link_to "Contact Sales", "#", class: "btn btn-outline w-full" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="mt-20 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+
+      <div class="join join-vertical w-full">
+        <div class="collapse collapse-arrow join-item border border-base-300">
+          <input type="radio" name="faq-accordion" checked="checked" />
+          <div class="collapse-title text-lg font-medium">
+            What happens after my free trial?
+          </div>
+          <div class="collapse-content">
+            <p class="text-base-content/70">
+              After your 7-day free trial ends, you'll be automatically subscribed to your chosen plan. You can cancel anytime before the trial ends to avoid being charged.
+            </p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow join-item border border-base-300">
+          <input type="radio" name="faq-accordion" />
+          <div class="collapse-title text-lg font-medium">
+            Can I change plans later?
+          </div>
+          <div class="collapse-content">
+            <p class="text-base-content/70">
+              Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
+            </p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow join-item border border-base-300">
+          <input type="radio" name="faq-accordion" />
+          <div class="collapse-title text-lg font-medium">
+            What payment methods do you accept?
+          </div>
+          <div class="collapse-content">
+            <p class="text-base-content/70">
+              We accept all major credit cards through Stripe, including Visa, Mastercard, American Express, and Discover.
+            </p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow join-item border border-base-300">
+          <input type="radio" name="faq-accordion" />
+          <div class="collapse-title text-lg font-medium">
+            Is there a refund policy?
+          </div>
+          <div class="collapse-content">
+            <p class="text-base-content/70">
+              We offer a 30-day money-back guarantee. If you're not satisfied with our service, contact us within 30 days of your first payment for a full refund.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
