@@ -1,21 +1,23 @@
 # Nixpacks configuration for Coolify deployment
 
+# Use providers to control auto-detection
 [phases.setup]
-# Let Nixpacks auto-detect Ruby and Node.js to avoid conflicts
-aptPkgs = ["libpq-dev"]
+nixPkgs = ["ruby_3_3", "postgresql_15"]
+aptPkgs = ["libpq-dev", "libyaml-dev", "libffi-dev", "libreadline-dev", "zlib1g-dev", "libssl-dev"]
 
 [phases.install]
+dependsOn = ["setup"]
 cmds = [
-    "npm install -g yarn",
-    "bundle install",
-    "yarn install",
-    "npm install -g @tailwindcss/cli"
+    "gem install bundler",
+    "bundle install"
 ]
 
 [phases.build]
+dependsOn = ["install"]
 cmds = [
+    "npm install -g @tailwindcss/cli",
     "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
-    "bundle exec rails assets:precompile"
+    "SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile"
 ]
 
 [start]
@@ -25,3 +27,4 @@ cmd = "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"
 RAILS_ENV = "production"
 RAILS_LOG_TO_STDOUT = "true"
 RAILS_SERVE_STATIC_FILES = "true"
+SECRET_KEY_BASE_DUMMY = "1"
