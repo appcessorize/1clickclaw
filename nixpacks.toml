@@ -1,24 +1,12 @@
 # Nixpacks configuration for Coolify deployment
 
-# Disable auto-detection to prevent rbenv from trying to build Ruby from source
-providers = []
-
 [phases.setup]
-nixPkgs = ["ruby_3_3", "postgresql_15", "nodejs_22", "yarn"]
-aptPkgs = ["libpq-dev", "libyaml-dev", "libffi-dev", "libreadline-dev", "zlib1g-dev", "libssl-dev"]
-
-[phases.install]
-dependsOn = ["setup"]
-cmds = [
-    "gem install bundler -v 2.6.2",
-    "bundle config set --local deployment true",
-    "bundle config set --local without 'development test'",
-    "bundle install"
-]
+nixPkgs = ["postgresql_15"]
+aptPkgs = ["libpq-dev", "libyaml-dev", "libffi-dev", "libreadline-dev", "zlib1g-dev", "libssl-dev", "autoconf", "bison", "rustc", "cargo"]
 
 [phases.build]
-dependsOn = ["install"]
 cmds = [
+    "npm install -g yarn",
     "yarn install",
     "SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile"
 ]
