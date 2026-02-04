@@ -92,7 +92,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
 
       - name: Install JS dependencies
         run: |
