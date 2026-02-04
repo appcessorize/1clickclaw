@@ -38,11 +38,16 @@ RUN apt-get update -qq && \
 # Install JavaScript dependencies
 ARG NODE_VERSION=24.9.0
 ARG YARN_VERSION=1.13.0
+ARG BUN_VERSION=1.1.0
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
     npm install -g yarn@$YARN_VERSION && \
     rm -rf /tmp/node-build-master
+
+# Install Bun for Tailwind CSS build
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
 
 # Install application gems
 COPY vendor/* ./vendor/
@@ -54,8 +59,8 @@ RUN bundle install && \
     bundle exec bootsnap precompile -j 1 --gemfile
 
 # Install node modules
-COPY package.json yarn.lock ./
-RUN yarn install --immutable
+COPY package.json yarn.lock bun.lock ./
+RUN yarn install --immutable && bun install
 
 # Copy application code
 COPY . .
@@ -63,6 +68,9 @@ COPY . .
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
+
+# Build CSS with Tailwind
+RUN bun run build:css
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile

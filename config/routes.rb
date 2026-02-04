@@ -7,9 +7,12 @@ Rails.application.routes.draw do
   # Marketing pages
   root "home#index"
   get "pricing", to: "home#pricing"
+  get "terms", to: "home#terms"
+  get "privacy", to: "home#privacy"
 
   # Member dashboard
   resource :dashboard, only: [:show], controller: "dashboard"
+  resource :settings, only: [:show], controller: "settings"
 
   # Subscriptions
   resources :subscriptions, only: [:create] do

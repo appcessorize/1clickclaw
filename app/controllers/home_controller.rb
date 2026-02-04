@@ -6,4 +6,10 @@ class HomeController < ApplicationController
 
   def pricing
   end
+
+  def terms
+  end
+
+  def privacy
+  end
 end

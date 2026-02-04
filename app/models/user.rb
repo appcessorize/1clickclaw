@@ -35,13 +35,18 @@ class User < ApplicationRecord
 
   # OAuth
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
-      user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name
+    user = where(provider: auth.provider, uid: auth.uid).first_or_initialize do |new_user|
+      new_user.email = auth.info.email
+      new_user.password = Devise.friendly_token[0, 20]
       # Skip confirmation for OAuth users with verified emails
-      user.skip_confirmation! if auth.info.email_verified
+      new_user.skip_confirmation! if auth.info.email_verified
     end
+
+    # Always update name and avatar on login
+    user.name = auth.info.name
+    user.avatar_url = auth.info.image
+    user.save!
+    user
   end
 
   # Subscription helpers

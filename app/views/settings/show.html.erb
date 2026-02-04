@@ -1,0 +1,94 @@
+<% content_for :title, "Settings - ClawSaaS" %>
+
+<div class="container mx-auto px-4 py-12 max-w-2xl">
+  <h1 class="text-3xl font-bold mb-8">Settings</h1>
+
+  <!-- Profile Card -->
+  <div class="card bg-base-200 mb-6">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Profile</h2>
+
+      <div class="flex items-center gap-4">
+        <div class="avatar">
+          <div class="w-20 rounded-full">
+            <% if current_user.avatar_url.present? %>
+              <%= image_tag current_user.avatar_url, alt: current_user.display_name, referrerpolicy: "no-referrer" %>
+            <% else %>
+              <div class="bg-primary text-primary-content w-20 h-20 rounded-full flex items-center justify-center">
+                <span class="text-3xl"><%= current_user.display_name.first.upcase %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold"><%= current_user.display_name %></h3>
+          <p class="text-base-content/70"><%= current_user.email %></p>
+          <div class="badge badge-ghost mt-2">
+            <% if current_user.provider == "google_oauth2" %>
+              <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Signed in with Google
+            <% else %>
+              Email account
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscription Card -->
+  <div class="card bg-base-200 mb-6">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Subscription</h2>
+
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-medium">
+            Status:
+            <span class="badge <%= current_user.subscribed? ? 'badge-success' : 'badge-warning' %>">
+              <%= current_user.subscription_status.titleize %>
+            </span>
+          </p>
+          <% if current_user.subscribed? && current_user.stripe_subscription_id.present? %>
+            <p class="text-sm text-base-content/70 mt-1">
+              Manage your billing and subscription through the customer portal.
+            </p>
+          <% end %>
+        </div>
+
+        <% if current_user.stripe_customer_id.present? %>
+          <%= button_to "Manage Billing", portal_subscriptions_path, method: :post, class: "btn btn-outline btn-sm" %>
+        <% elsif !current_user.subscribed? %>
+          <%= link_to "Subscribe", pricing_path, class: "btn btn-primary btn-sm" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Actions -->
+  <div class="card bg-base-200">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Account</h2>
+
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 bg-base-100 rounded-lg">
+          <div>
+            <p class="font-medium">Sign out</p>
+            <p class="text-sm text-base-content/70">Sign out of your account on this device.</p>
+          </div>
+          <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn-outline btn-error btn-sm" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <%= link_to "Back to Dashboard", dashboard_path, class: "btn btn-ghost" %>
+  </div>
+</div>
