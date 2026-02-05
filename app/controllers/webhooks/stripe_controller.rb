@@ -3,7 +3,7 @@
 module Webhooks
   class StripeController < ApplicationController
     skip_before_action :verify_authenticity_token
-    skip_after_action :verify_authorized, if: -> { respond_to?(:verify_authorized) }
+    skip_after_action :verify_authorized, raise: false
 
     def create
       payload = request.body.read
